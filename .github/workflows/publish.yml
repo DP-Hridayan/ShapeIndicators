@@ -3,7 +3,11 @@ name: Publish Library
 on:
   push:
     tags:
-      - "*" 
+      - "*"
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   publish:
@@ -11,6 +15,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       - name: Set up JDK
         uses: actions/setup-java@v4

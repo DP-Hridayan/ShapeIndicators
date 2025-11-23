@@ -16,13 +16,6 @@ android {
     }
 
     buildFeatures { compose = true }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 group = "io.github.DP-Hridayan"

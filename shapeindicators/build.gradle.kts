@@ -77,7 +77,12 @@ afterEvaluate {
                 artifactId = "shape-indicators"
                 version = project.version.toString()
 
-                artifact(tasks.getByName("sourcesJar"))
+                val sourcesJarTask = tasks.named("sourcesJar")
+                artifact(sourcesJarTask)
+
+                tasks.withType<GenerateModuleMetadata>().configureEach {
+                    dependsOn(sourcesJarTask)
+                }
             }
         }
 

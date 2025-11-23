@@ -14,7 +14,6 @@ android {
 
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -41,6 +40,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -60,13 +65,6 @@ dependencies {
 group = "io.github.DP-Hridayan"
 version = "1.0.0"
 
-tasks.register("sourcesJar", Jar::class) {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
-    @Suppress("UnstableApiUsage")
-    from(android.sourceSets["main"].kotlin.directories)
-}
-
 afterEvaluate {
     publishing {
         publications {
@@ -76,13 +74,6 @@ afterEvaluate {
                 groupId = project.group.toString()
                 artifactId = "shape-indicators"
                 version = project.version.toString()
-
-                val sourcesJarTask = tasks.named("sourcesJar")
-                artifact(sourcesJarTask)
-
-                tasks.withType<GenerateModuleMetadata>().configureEach {
-                    dependsOn(sourcesJarTask)
-                }
             }
         }
 
@@ -90,7 +81,6 @@ afterEvaluate {
             maven {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/DP-Hridayan/ShapeIndicators")
-
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")

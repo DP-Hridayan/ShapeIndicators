@@ -82,8 +82,8 @@ afterEvaluate {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/DP-Hridayan/ShapeIndicators")
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+                    username = System.getenv("USERNAME")
+                    password = System.getenv("TOKEN")
                 }
             }
         }

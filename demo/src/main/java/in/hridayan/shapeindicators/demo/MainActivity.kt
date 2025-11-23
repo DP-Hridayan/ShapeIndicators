@@ -42,13 +42,15 @@ fun DemoScreen() {
             state = pagerState,
             modifier = Modifier.height(250.dp)
         ) { page ->
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text("Page $page", style = MaterialTheme.typography.headlineMedium)
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
 
         ShapeIndicatorRow(
             pagerState = pagerState, modifier = Modifier

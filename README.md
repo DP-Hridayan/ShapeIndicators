@@ -210,30 +210,66 @@ ShapeIndicatorRow(
 ## Complete Example
 
 ```kotlin
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun Example() {
-    val pagerState = rememberPagerState { 5 }
+fun ShapeIndicatorDemo() {
 
-    ShapeIndicatorRow(
-        pagerState = pagerState,
-        modifier = Modifier.fillMaxWidth(),
-        sizes = ShapeIndicatorDefaults.sizes(
-            selectedSize = 20.dp,
-            unselectedSize = 12.dp
-        ),
-        colors = ShapeIndicatorDefaults.colors(
-            selectedColor = Color.Red,
-            unselectedColor = Color.Gray
-        ),
-        shapes = listOf(
-            MaterialShapes.Cookie4Sided,
-            MaterialShapes.Pill,
-            MaterialShapes.Arrow
-        ),
-        shuffleShapes = true,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    )
+    val pagerState = rememberPagerState(pageCount = { 5 })
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        // Horizontal Pager
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+        ) { page ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.large)
+                    .background(
+                        MaterialTheme.colorScheme.primary.copy(
+                            alpha = 0.1f * (page + 5)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Page ${page + 1}",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        // Shape Indicator Row
+        ShapeIndicatorRow(
+            pagerState = pagerState,
+            modifier = Modifier.fillMaxWidth(),
+            sizes = ShapeIndicatorDefaults.sizes(
+                selectedSize = 20.dp,
+                unselectedSize = 12.dp
+            ),
+            colors = ShapeIndicatorDefaults.colors(
+                selectedColor = MaterialTheme.colorScheme.primary,
+                unselectedColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            shapes = listOf(
+                MaterialShapes.Cookie4Sided,
+                MaterialShapes.Pill,
+                MaterialShapes.Arrow
+            ),
+            shuffleShapes = true,
+            horizontalArrangement = Arrangement.Center
+        )
+    }
 }
 ```

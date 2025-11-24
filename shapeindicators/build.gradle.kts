@@ -42,7 +42,7 @@ dependencies {
 
 mavenPublishing {
     coordinates(
-        groupId = "io.github.dphridayan",
+        groupId = "io.github.dp-hridayan",
         artifactId = "shapeindicators",
         version = "1.0.0"
     )

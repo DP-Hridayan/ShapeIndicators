@@ -18,15 +18,14 @@ android {
     buildFeatures { compose = true }
 }
 
-group = "io.github.DP-Hridayan"
-version = "1.0.0"
-
+@Suppress("UnstableApiUsage")
 mavenPublishing {
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.DEFAULT)
+    coordinates("io.github.DP-Hridayan", "shapeindicators", "1.0.0")
 
     pom {
         name.set("ShapeIndicators")
         description.set("A Jetpack Compose library for pager indicators")
+        inceptionYear.set("2025")
         url.set("https://github.com/DP-Hridayan/ShapeIndicators")
         licenses {
             license {
@@ -42,13 +41,9 @@ mavenPublishing {
             }
         }
         scm {
-            connection.set("scm:git:git://github.com/DP-Hridayan/ShapeIndicators.git")
-            developerConnection.set("scm:git:ssh://github.com/DP-Hridayan/ShapeIndicators.git")
             url.set("https://github.com/DP-Hridayan/ShapeIndicators")
+            connection.set("scm:git:git://github.com/DP-Hridayan/ShapeIndicators.git")
+            developerConnection.set("scm:git:ssh://git@github.com/DP-Hridayan/ShapeIndicators.git")
         }
-    }
-
-    signing {
-        useGpgCmd()
     }
 }

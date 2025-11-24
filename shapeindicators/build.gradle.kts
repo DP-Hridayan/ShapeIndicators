@@ -44,7 +44,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.dp-hridayan",
         artifactId = "shapeindicators",
-        version = "1.0.0"
+        version = "1.0.1"
     )
 
     pom {
@@ -58,6 +58,7 @@ mavenPublishing {
                 url.set("https://opensource.org/licenses/MIT")
             }
         }
+
         developers {
             developer {
                 id.set("DP-Hridayan")
@@ -65,6 +66,7 @@ mavenPublishing {
                 email.set("hridayanofficial@gmail.com")
             }
         }
+
         scm {
             url.set("https://github.com/DP-Hridayan/ShapeIndicators")
             connection.set("scm:git:git://github.com/DP-Hridayan/ShapeIndicators.git")
@@ -72,6 +74,6 @@ mavenPublishing {
         }
     }
 
-    publishToMavenCentral()
+    publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 }

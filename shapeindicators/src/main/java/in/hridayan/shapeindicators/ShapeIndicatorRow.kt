@@ -87,8 +87,8 @@ import kotlin.math.abs
 fun ShapeIndicatorRow(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    sizes: ShapeIndicatorDefaults.ShapeIndicatorSizes = ShapeIndicatorDefaults.sizes(),
-    colors: ShapeIndicatorDefaults.ShapeIndicatorColors = ShapeIndicatorDefaults.colors(),
+    sizes: ShapeIndicatorSizes = ShapeIndicatorDefaults.sizes(),
+    colors: ShapeIndicatorColors = ShapeIndicatorDefaults.colors(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     shapes: List<RoundedPolygon> = DefaultShapes,
@@ -176,17 +176,43 @@ fun ShapeIndicatorRow(
     }
 }
 
-// ---------- Helpers ----------
-private fun lerpSize(start: Dp, end: Dp, f: Float): Dp =
-    start + (end - start) * f.coerceIn(0f, 1f)
 
-private fun lerpColor(start: Color, end: Color, f: Float): Color =
-    androidx.compose.ui.graphics.lerp(start, end, f.coerceIn(0f, 1f))
+data class ShapeIndicatorColors(
+    val selectedColor: Color,
+    val unselectedColor: Color
+)
 
-private fun RoundedPolygon.scaled(scale: Float): RoundedPolygon =
-    transformed { x, y -> FloatFloatPair(x * scale, y * scale) }
+data class ShapeIndicatorSizes(
+    val selectedSize: Dp,
+    val unselectedSize: Dp
+)
 
-// ---------- Default shapes ----------
+@ExperimentalMaterial3ExpressiveApi
+object ShapeIndicatorDefaults {
+    /**
+     * Set the color of the indicator shape in various states
+     *
+     * @param selectedColor Color of the indicator shape when it is selected
+     * @param unselectedColor Color of the indicator shape when it is not selected
+     */
+    @Composable
+    fun colors(
+        selectedColor: Color = MaterialTheme.colorScheme.primary,
+        unselectedColor: Color = MaterialTheme.colorScheme.surfaceVariant
+    ) = ShapeIndicatorColors(selectedColor, unselectedColor)
+
+    /**
+     * Set the size of the indicator shape in various states
+     *
+     * @param selectedSize Size of the indicator shape when it is selected
+     * @param unselectedSize Size of the indicator shape when it is not selected
+     */
+    fun sizes(
+        selectedSize: Dp = 16.dp,
+        unselectedSize: Dp = 10.dp
+    ) = ShapeIndicatorSizes(selectedSize, unselectedSize)
+}
+
 val DefaultShapes = listOf(
     MaterialShapes.SoftBurst,
     MaterialShapes.Arrow,
@@ -196,32 +222,11 @@ val DefaultShapes = listOf(
     MaterialShapes.Pentagon,
 )
 
-@ExperimentalMaterial3ExpressiveApi
-object ShapeIndicatorDefaults {
-    data class ShapeIndicatorColors(
-        val selectedColor: Color,
-        val unselectedColor: Color
-    )
+private fun lerpSize(start: Dp, end: Dp, f: Float): Dp =
+    start + (end - start) * f.coerceIn(0f, 1f)
 
-    data class ShapeIndicatorSizes(
-        val selectedSize: Dp,
-        val unselectedSize: Dp
-    )
+private fun lerpColor(start: Color, end: Color, f: Float): Color =
+    androidx.compose.ui.graphics.lerp(start, end, f.coerceIn(0f, 1f))
 
-    /**
-     * Helper function to create a Colors object with optional overrides.
-     */
-    @Composable
-    fun colors(
-        selectedColor: Color = MaterialTheme.colorScheme.primary,
-        unselectedColor: Color = MaterialTheme.colorScheme.surfaceVariant
-    ) = ShapeIndicatorColors(selectedColor, unselectedColor)
-
-    /**
-     * Helper function to create a Sizes object with optional overrides.
-     */
-    fun sizes(
-        selectedSize: Dp = 16.dp,
-        unselectedSize: Dp = 10.dp
-    ) = ShapeIndicatorSizes(selectedSize, unselectedSize)
-}
+private fun RoundedPolygon.scaled(scale: Float): RoundedPolygon =
+    transformed { x, y -> FloatFloatPair(x * scale, y * scale) }

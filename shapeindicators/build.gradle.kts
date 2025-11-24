@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
+    signing
 }
 
 android {
@@ -73,4 +74,13 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/DP-Hridayan/ShapeIndicators.git")
         }
     }
+}
+
+signing {
+    useInMemoryPgpKeys(
+        project.findProperty("signing.keyId") as String?,
+        project.findProperty("signing.secretKeyRingFile") as String?,
+        project.findProperty("signing.password") as String?,
+    )
+    sign(publishing.publications)
 }

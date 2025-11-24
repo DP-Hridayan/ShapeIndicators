@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.shapeindicators)
 }
 ```
+
+</br>
+
 ## ShapeIndicatorRow — Parameters & Usage
 
 `ShapeIndicatorRow` provides animated, morphing shape indicators for the Compose Pager.  

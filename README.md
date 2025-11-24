@@ -11,4 +11,11 @@
 
 </br>
 
-### Demo
+### Usage
+
+➤ `build.gradle` (Groovy)
+```gradle
+dependencies {
+    implementation "io.github.dp-hridayan:shapeindicators:1.0.1"
+}
+```

@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
-    signing
 }
 
 android {
@@ -41,14 +40,12 @@ dependencies {
     implementation(libs.material)
 }
 
-group = "io.github.DP-Hridayan"
-version = "1.0.0"
-
 mavenPublishing {
-    publishToMavenCentral()
-    signAllPublications()
-
-    coordinates(group.toString(), name, version.toString())
+    coordinates(
+        groupId = "io.github.DP-Hridayan",
+        artifactId = "shapeindicators",
+        version = "1.0.0"
+    )
 
     pom {
         name.set("ShapeIndicators")
@@ -74,13 +71,7 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/DP-Hridayan/ShapeIndicators.git")
         }
     }
-}
 
-signing {
-    useInMemoryPgpKeys(
-        project.findProperty("signing.keyId") as String?,
-        project.findProperty("signing.secretKeyRingFile") as String?,
-        project.findProperty("signing.password") as String?,
-    )
-    sign(publishing.publications)
+    publishToMavenCentral()
+    signAllPublications()
 }

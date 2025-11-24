@@ -273,3 +273,11 @@ fun ShapeIndicatorDemo() {
     }
 }
 ```
+</br>
+
+> **A Indicator Row with morphing shapes will be created below the Pager**
+
+<p align="center">
+  <img src="assets/demo_screenshot.jpg" alt="Banner" />
+</p>
+

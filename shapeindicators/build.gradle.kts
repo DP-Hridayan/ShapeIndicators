@@ -45,6 +45,9 @@ group = "io.github.DP-Hridayan"
 version = "1.0.0"
 
 mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+
     coordinates(group.toString(), name, version.toString())
 
     pom {

@@ -15,12 +15,37 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlin {
+        jvmToolchain(21)
+    }
+
     buildFeatures { compose = true }
 }
 
-@Suppress("UnstableApiUsage")
+dependencies {
+    implementation(platform(libs.compose.bom))
+    implementation(libs.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.material)
+    implementation(libs.material3)
+    implementation(libs.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+}
+
+group = "io.github.DP-Hridayan"
+version = "1.0.0"
+
 mavenPublishing {
-    coordinates("io.github.DP-Hridayan", "shapeindicators", "1.0.0")
+    coordinates(group.toString(), name, version.toString())
 
     pom {
         name.set("ShapeIndicators")

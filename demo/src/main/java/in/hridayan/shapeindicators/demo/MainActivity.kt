@@ -3,23 +3,30 @@ package `in`.hridayan.shapeindicators.demo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,14 +43,34 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DemoScreen() {
     val pagerState = rememberPagerState { 5 }
+    val scope = rememberCoroutineScope()
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.height(250.dp)
+            modifier = Modifier
+                .height(250.dp)
+                .padding(top = 50.dp)
         ) { page ->
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp)
+                    .clip(MaterialTheme.shapes.extraLargeIncreased)
+                    .background(
+                        when (page) {
+                            0 -> Color(0xFFB39DDB)
+                            1 -> Color(0xFF80CBC4)
+                            2 -> Color(0xFFFFAB91)
+                            3 -> Color(0xFFA5D6A7)
+                            else -> Color(0xFFFFCC80)
+                        }
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text("Page $page", style = MaterialTheme.typography.headlineMedium)
@@ -53,9 +80,41 @@ fun DemoScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         ShapeIndicatorRow(
-            pagerState = pagerState, modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            pagerState = pagerState,
+            modifier = Modifier.padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = {
+                    scope.launch {
+                        val prev = (pagerState.currentPage - 1).coerceAtLeast(0)
+                        pagerState.animateScrollToPage(prev)
+                    }
+                }
+            ) {
+                Text("Previous")
+            }
+
+            Text("Page ${pagerState.currentPage + 1} of ${pagerState.pageCount}")
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        val next =
+                            (pagerState.currentPage + 1).coerceAtMost(pagerState.pageCount - 1)
+                        pagerState.animateScrollToPage(next)
+                    }
+                }
+            ) {
+                Text("Next")
+            }
+        }
     }
 }

@@ -13,9 +13,35 @@
 
 ### Usage
 
-➤ `build.gradle` (Groovy)
+➤ `build.gradle`
 ```gradle
 dependencies {
     implementation "io.github.dp-hridayan:shapeindicators:1.0.1"
+}
+```
+
+➤ `build.gradle.kts`
+```kotlin
+dependencies {
+    implementation("io.github.dp-hridayan:shapeindicators:1.0.1")
+}
+```
+
+➤ TOML — `libs.versions.toml`
+```toml
+# libs.versions.toml
+[versions]
+shapeindicators = "1.0.1"
+```
+
+```toml
+# libs.versions.toml
+[libraries]
+shapeindicators = { module = "io.github.dp-hridayan:shapeindicators", version.ref = "shapeindicators" }
+```
+
+```kotlin
+dependencies {
+    implementation(libs.shapeindicators)
 }
 ```

@@ -3,47 +3,32 @@ name: Update ShapeIndicators Version in README
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * 1' # every Monday at 3:00 UTC
+    - cron: '0 3 * * 1'
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 2️⃣ Get latest version from Maven Central metadata
       - name: Get latest ShapeIndicators version
         id: get_version
         run: |
-          LATEST=$(curl -s https://repo1.maven.org/maven2/io/github/dp-hridayan/shapeindicators/maven-metadata.xml \
+          LATEST=$(curl -s "https://repo1.maven.org/maven2/io/github/dp-hridayan/shapeindicators/maven-metadata.xml" \
             | grep -oPm1 "(?<=<latest>)[^<]+")
-          echo "Latest version: $LATEST"
-          echo "latest_version=$LATEST" >> $GITHUB_OUTPUT
+          echo "LATEST_VERSION=$LATEST" >> $GITHUB_ENV
 
-      # 3️⃣ Update README usage snippets
-      - name: Update README
-        run: |
-          VERSION=${{ steps.get_version.outputs.latest_version }}
-          echo "Updating README to use version $VERSION"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-          # Update Groovy snippet
-          sed -i "s/implementation \"io.github.dp-hridayan:shapeindicators:[0-9.]\+\"/implementation \"io.github.dp-hridayan:shapeindicators:$VERSION\"/" README.md || true
+      - run: python3 update_readme.py
 
-          # Update Kotlin snippet
-          sed -i "s/implementation(\"io.github.dp-hridayan:shapeindicators:[0-9.]\+\")/implementation(\"io.github.dp-hridayan:shapeindicators:$VERSION\")/" README.md || true
-
-          # Update TOML snippet
-          sed -i "s/shapeindicators = \"[0-9.]\+\"/shapeindicators = \"$VERSION\"/" README.md || true
-
-      # 4️⃣ Commit & push changes using GITHUB_TOKEN
-      - name: Commit & Push
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --quiet || git commit -m "Update ShapeIndicators version in README to $LATEST_VERSION"
+          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git diff --quiet || git commit -m "Update ShapeIndicators version in README to ${{ steps.get_version.outputs.latest_version }}"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${GITHUB_REF#refs/heads/}

@@ -11,23 +11,13 @@ README_FILE = "README.md"
 with open(README_FILE, "r") as f:
     content = f.read()
 
-content = re.sub(
-    r'(implementation\s*["\']io\.github\.dp-hridayan:shapeindicators:)[0-9.]+(["\'])',
-    fr'\1{VERSION}\2',
-    content
-)
+pattern1 = r'(implementation\s*["\']io\.github\.dp-hridayan:shapeindicators:)[0-9.]+(["\'])'
+pattern2 = r'(implementation\(\s*["\']io\.github\.dp-hridayan:shapeindicators:)[0-9.]+(["\']\))'
+pattern3 = r'(shapeindicators\s*=\s*")[0-9.]+(")'
 
-content = re.sub(
-    r'(implementation\(\s*["\']io\.github\.dp-hridayan:shapeindicators:)[0-9.]+(["\']\))',
-    fr'\1{VERSION}\2',
-    content
-)
-
-content = re.sub(
-    r'(shapeindicators\s*=\s*")[0-9.]+(")',
-    fr'\1{VERSION}\2',
-    content
-)
+content = re.sub(pattern1, lambda m: f"{m.group(1)}{VERSION}{m.group(2)}", content)
+content = re.sub(pattern2, lambda m: f"{m.group(1)}{VERSION}{m.group(2)}", content)
+content = re.sub(pattern3, lambda m: f"{m.group(1)}{VERSION}{m.group(2)}", content)
 
 with open(README_FILE, "w") as f:
     f.write(content)

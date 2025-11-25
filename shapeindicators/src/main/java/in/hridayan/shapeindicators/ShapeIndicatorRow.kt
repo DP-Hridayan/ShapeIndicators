@@ -4,6 +4,7 @@ package `in`.hridayan.shapeindicators
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.toPath
 import kotlin.math.abs
@@ -59,6 +61,14 @@ import kotlin.math.abs
  * Use [ShapeIndicatorDefaults.shapes].
  *
  * @param shuffleShapes If true, shape lists are shuffled once and indicators cycle through them.
+ *
+ * @param onIndicatorClick Optional click listener for each indicator.
+ *
+ * If provided, every indicator becomes individually clickable **without ripple**
+ *
+ * The callback receives the tapped indicator’s index:
+ * - Useful for jumping the pager to a specific page.
+ * - Can also be used for analytics or custom UI reactions.
  *
  * @param horizontalArrangement Spacing between indicators.
  *
@@ -103,6 +113,7 @@ fun ShapeIndicatorRow(
     glow: ShapeIndicatorGlow = ShapeIndicatorDefaults.glow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
+    onIndicatorClick: ((index: Int) -> Unit)? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically
 ) {
@@ -196,7 +207,13 @@ fun ShapeIndicatorRow(
             val animatedGlowColor by animateColorAsState(targetGlowColor)
             val animatedGlowBlur by animateDpAsState(targetGlowBlur)
 
-            Box(modifier = Modifier.size(selectedSize)) {
+            Box(
+                modifier = Modifier
+                    .size(selectedSize)
+                    .pointerInput(onIndicatorClick) {
+                        if (onIndicatorClick == null) return@pointerInput
+                        detectTapGestures { onIndicatorClick(index) }
+                    }) {
                 Box(
                     modifier = Modifier
                         .size(animatedShapeSize)

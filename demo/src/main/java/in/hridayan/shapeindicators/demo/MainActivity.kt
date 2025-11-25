@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
 import kotlinx.coroutines.launch
 
@@ -57,23 +58,24 @@ fun DemoScreen() {
                 .height(250.dp)
                 .padding(top = 50.dp)
         ) { page ->
+
+            val pageColors = listOf(
+                Color(0xFFB39DDB),
+                Color(0xFF80CBC4),
+                Color(0xFFFFAB91),
+                Color(0xFFA5D6A7),
+                Color(0xFFFFCC80)
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 10.dp)
                     .clip(MaterialTheme.shapes.extraLargeIncreased)
-                    .background(
-                        when (page) {
-                            0 -> Color(0xFFB39DDB)
-                            1 -> Color(0xFF80CBC4)
-                            2 -> Color(0xFFFFAB91)
-                            3 -> Color(0xFFA5D6A7)
-                            else -> Color(0xFFFFCC80)
-                        }
-                    ),
+                    .background(pageColors[page % pageColors.size]),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Page $page", style = MaterialTheme.typography.headlineMedium)
+                Text("Page ${page + 1}", style = MaterialTheme.typography.headlineMedium)
             }
         }
 
@@ -83,6 +85,7 @@ fun DemoScreen() {
             pagerState = pagerState,
             modifier = Modifier.padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
+            sizes = ShapeIndicatorDefaults.sizes(selectedSize = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -44,7 +44,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.dp-hridayan",
         artifactId = "shapeindicators",
-        version = "1.0.1"
+        version = "2.0.0"
     )
 
     pom {

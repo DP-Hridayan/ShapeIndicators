@@ -1,5 +1,6 @@
 package `in`.hridayan.shapeindicators
 
+import android.graphics.BlurMaskFilter
 import androidx.collection.FloatFloatPair
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -31,3 +32,12 @@ inline fun <T> interpolateForIndex(
     }
 }
 
+fun safeBlurMaskFilter(radius: Float): BlurMaskFilter? {
+    return if (radius > 0f && radius < 3000f) {
+        try {
+            BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL)
+        } catch (_: Exception) {
+            null
+        }
+    } else null
+}

@@ -17,8 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.toPath
 import kotlin.math.abs
@@ -26,55 +31,48 @@ import kotlin.math.abs
 /**
  * Displays a morphing Material–shape indicator row for a pager.
  *
- * Each indicator smoothly animates **size**, **color**, **border**, and **shape**
- * based on the [PagerState]'s current position and scroll offset.
+ * Each indicator animates **size**, **color**, **border**, **glow**, and **shape**
+ * based on the current page and scroll offset from [PagerState].
  *
- * When an indicator becomes selected, it animates between the visual states defined in:
- * - [sizes] → animates indicator size
- * - [colors] → animates fill color
- * - [borders] → animates stroke width + stroke color
- * - [shapes] → morphs between expressive Material shapes
+ * @param modifier Modifier for the indicator row.
  *
- * @param modifier Modifier applied to the indicator row.
- *
- * @param pagerState The [PagerState] used to determine:
+ * @param pagerState Provides:
  * - total number of pages
- * - current selected page index
- * - scroll offset for smooth morph/size/color/border interpolation.
+ * - selected page index
+ * - scroll offset used for interpolation
  *
- * @param sizes Defines the size of indicators in selected and unselected states.
- * Use [ShapeIndicatorDefaults.sizes] to create.
+ * @param sizes Defines selected/unselected indicator sizes.
+ * Use [ShapeIndicatorDefaults.sizes].
  *
- * @param colors Defines the fill color of indicators in both states.
- * Use [ShapeIndicatorDefaults.colors] to create.
- * (Must be called inside a composable because defaults read `MaterialTheme.colorScheme`.)
+ * @param colors Defines fill colors for selected/unselected states.
+ * Use [ShapeIndicatorDefaults.colors].
  *
- * @param borders Defines stroke width and stroke color for selected and unselected indicators.
- * Use [ShapeIndicatorDefaults.borders] to create.
- * - When scrolling between pages, the border animates
- *   from `unselectedWidth → selectedWidth` and
- *   `unselectedColor → selectedColor`.
- * - Set both widths to `0.dp` if you don't want borders at all.
+ * @param borders Defines stroke widths and stroke colors.
+ * Use [ShapeIndicatorDefaults.borders].
+ * Set widths to `0.dp` to disable borders.
  *
- * @param shapes Defines the selected and unselected indicator shapes.
- * Use [ShapeIndicatorDefaults.shapes] to use Material 3 expressive shapes.
+ * @param glow Defines glow color, radius, and blur for both states.
+ * Use [ShapeIndicatorDefaults.glow].
+ * Glow appears behind indicators and animates during scroll.
  *
- * @param shuffleShapes If true, the selected and unselected shape lists are randomly
- * shuffled once at composition time, and indicators cycle through that shuffled order.
+ * @param shapes Defines selected/unselected shapes.
+ * Use [ShapeIndicatorDefaults.shapes].
  *
- * @param horizontalArrangement Spacing arrangement for the indicator row.
+ * @param shuffleShapes If true, shape lists are shuffled once and indicators cycle through them.
  *
- * @param verticalAlignment Alignment of indicators inside the row’s height.
+ * @param horizontalArrangement Spacing between indicators.
+ *
+ * @param verticalAlignment Vertical alignment of indicators.
  *
  * ## Behavior
- * - Selected indicators animate from **unselected → selected** using:
- *   - size interpolation
- *   - color interpolation
- *   - border width/color interpolation
- *   - shape morphing
- * - Pager scroll smoothly morphs indicators between the two states using
- *   fractional offsets.
- * - Shape transitions use expressive M3 shapes (via [Morph]).
+ * Indicators smoothly animate between **unselected → selected** states using:
+ * - size interpolation
+ * - fill color interpolation
+ * - border width & color interpolation
+ * - glow radius & blur interpolation
+ * - shape morphing
+ *
+ * Scroll offset produces continuous transitions between pages.
  *
  * ## Example
  * ```
@@ -84,16 +82,16 @@ import kotlin.math.abs
  *     pagerState = pagerState,
  *     sizes = ShapeIndicatorDefaults.sizes(20.dp, 12.dp),
  *     colors = ShapeIndicatorDefaults.colors(),
- *     borders = ShapeIndicatorDefaults.borders(
- *         selectedWidth = 2.dp,
- *         unselectedWidth = 0.dp
+ *     borders = ShapeIndicatorDefaults.borders(2.dp, 0.dp),
+ *     glow = ShapeIndicatorDefaults.glow(
+ *         selectedRadius = 8.dp,
+ *         selectedBlur = 12.dp
  *     ),
  *     shapes = ShapeIndicatorDefaults.shapes(),
  *     shuffleShapes = true
  * )
  * ```
  */
-
 @ExperimentalMaterial3ExpressiveApi
 @Composable
 fun ShapeIndicatorRow(
@@ -102,6 +100,7 @@ fun ShapeIndicatorRow(
     sizes: ShapeIndicatorSizes = ShapeIndicatorDefaults.sizes(),
     colors: ShapeIndicatorColors = ShapeIndicatorDefaults.colors(),
     borders: ShapeIndicatorBorders = ShapeIndicatorDefaults.borders(),
+    glow: ShapeIndicatorGlow = ShapeIndicatorDefaults.glow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
@@ -129,33 +128,73 @@ fun ShapeIndicatorRow(
 
         repeat(pageCount) { index ->
             val targetShapeSize = interpolateForIndex(
-                index, currentPage, offset,
-                unselectedSize, selectedSize,
+                index,
+                currentPage,
+                offset,
+                unselectedSize,
+                selectedSize,
                 ::lerpSize
             )
 
             val targetShapeColor = interpolateForIndex(
-                index, currentPage, offset,
-                unselectedColor, selectedColor,
+                index,
+                currentPage,
+                offset,
+                unselectedColor,
+                selectedColor,
                 ::lerpColor
             )
 
             val targetBorderWidth = interpolateForIndex(
                 index, currentPage, offset,
-                borders.unselectedWidth, borders.selectedWidth,
+                borders.unselectedWidth,
+                borders.selectedWidth,
                 ::lerpSize
             )
 
             val targetBorderColor = interpolateForIndex(
-                index, currentPage, offset,
-                borders.unselectedColor, borders.selectedColor,
+                index,
+                currentPage,
+                offset,
+                borders.unselectedColor,
+                borders.selectedColor,
                 ::lerpColor
+            )
+
+            val targetGlowRadius = interpolateForIndex(
+                index,
+                currentPage,
+                offset,
+                glow.unselectedRadius,
+                glow.selectedRadius,
+                ::lerpSize
+            )
+
+            val targetGlowColor = interpolateForIndex(
+                index,
+                currentPage,
+                offset,
+                glow.unselectedColor,
+                glow.selectedColor,
+                ::lerpColor
+            )
+
+            val targetGlowBlur = interpolateForIndex(
+                index,
+                currentPage,
+                offset,
+                glow.unselectedBlur,
+                glow.selectedBlur,
+                ::lerpSize
             )
 
             val animatedShapeSize by animateDpAsState(targetShapeSize)
             val animatedShapeColor by animateColorAsState(targetShapeColor)
             val animatedBorderWidth by animateDpAsState(targetBorderWidth)
             val animatedBorderColor by animateColorAsState(targetBorderColor)
+            val animatedGlowRadius by animateDpAsState(targetGlowRadius)
+            val animatedGlowColor by animateColorAsState(targetGlowColor)
+            val animatedGlowBlur by animateDpAsState(targetGlowBlur)
 
             Box(modifier = Modifier.size(selectedSize)) {
                 Box(
@@ -185,9 +224,37 @@ fun ShapeIndicatorRow(
                             val morph = Morph(start = startShape, end = endShape)
                             val path = morph.toPath(morphProgress).asComposePath()
 
+                            val blurPx = animatedGlowBlur.toPx()
+                            val glowRadiusPx = animatedGlowRadius.toPx()
+
                             onDrawBehind {
+                                // --- Glow ---
+                                if (glowRadiusPx > 0f || blurPx > 0f) {
+
+                                    val pathBounds = path.getBounds()
+                                    if (pathBounds.width > 0f && pathBounds.height > 0f) {
+
+                                        val fwPaint = Paint().asFrameworkPaint().apply {
+                                            isAntiAlias = true
+                                            maskFilter = safeBlurMaskFilter(blurPx)
+                                            style = android.graphics.Paint.Style.STROKE
+                                            strokeWidth = glowRadiusPx * 2f
+                                            color = animatedGlowColor.toArgb()
+                                        }
+
+                                        drawIntoCanvas { canvas ->
+                                            canvas.nativeCanvas.drawPath(
+                                                path.asAndroidPath(),
+                                                fwPaint
+                                            )
+                                        }
+                                    }
+                                }
+
+                                // --- fill ---
                                 drawPath(path, animatedShapeColor)
 
+                                // --- border ---
                                 if (animatedBorderWidth.value > 0f) {
                                     drawPath(
                                         path = path,

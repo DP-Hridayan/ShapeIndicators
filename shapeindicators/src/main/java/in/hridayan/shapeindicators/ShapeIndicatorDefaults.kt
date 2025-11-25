@@ -26,6 +26,15 @@ data class ShapeIndicatorBorders(
     val unselectedColor: Color
 )
 
+data class ShapeIndicatorGlow(
+    val selectedColor: Color,
+    val unselectedColor: Color,
+    val selectedRadius: Dp,
+    val unselectedRadius: Dp,
+    val selectedBlur: Dp,
+    val unselectedBlur: Dp
+)
+
 data class IndicatorShapes(
     val selectedShapes: List<RoundedPolygon>,
     val unselectedShapes: List<RoundedPolygon>
@@ -52,8 +61,8 @@ object ShapeIndicatorDefaults {
      * @param unselectedSize Size of the indicator shape when it is not selected
      */
     fun sizes(
-        selectedSize: Dp = 16.dp,
-        unselectedSize: Dp = 10.dp
+        selectedSize: Dp = defaultSelectedShapeSize,
+        unselectedSize: Dp = defaultUnselectedShapeSize
     ) = ShapeIndicatorSizes(selectedSize, unselectedSize)
 
     /**
@@ -97,6 +106,70 @@ object ShapeIndicatorDefaults {
     )
 
     /**
+     * Defines the glow effect for each indicator.
+     *
+     * Glow is drawn **behind** the shape using a thick blurred stroke.
+     *
+     * Each glow property supports separate values for:
+     * - selected indicators
+     * - unselected indicators
+     *
+     * ## What Glow Controls
+     * - **Color** → tint of the glow halo
+     * - **Radius** → how thick the glow stroke is (bigger = stronger halo)
+     * - **Blur** → how soft the glow spreads (only applied on supported devices)
+     *
+     * Glow automatically animates during page transitions, keeping behavior
+     * consistent with size/color/border/shape morphing.
+     *
+     * ## Parameters
+     *
+     * @param selectedColor Color of the glow when the indicator is selected.
+     * Defaults to a subtle highlight of the primary color.
+     *
+     * @param unselectedColor Color of the glow when unselected.
+     *
+     * @param selectedRadius Stroke radius of the glow when selected.
+     * Set to `0.dp` to disable glow.
+     *
+     * @param unselectedRadius Stroke radius of the glow for unselected indicators.
+     *
+     * @param selectedBlur Blur amount applied to the glow on selected indicators.
+     * Larger values = softer, more diffused glow.
+     *
+     * @param unselectedBlur Blur amount for unselected indicators.
+     *
+     * @return A [ShapeIndicatorGlow] configuration used by [ShapeIndicatorRow].
+     *
+     * ## Example
+     * ```
+     * ShapeIndicatorRow(
+     *     pagerState = pagerState,
+     *     glow = ShapeIndicatorDefaults.glow(
+     *         selectedRadius = 8.dp,
+     *         selectedBlur = 12.dp
+     *     )
+     * )
+     * ```
+     */
+    @Composable
+    fun glow(
+        selectedColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+        unselectedColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+        selectedRadius: Dp = 0.dp,
+        unselectedRadius: Dp = 0.dp,
+        selectedBlur: Dp = 0.dp,
+        unselectedBlur: Dp = 0.dp
+    ): ShapeIndicatorGlow = ShapeIndicatorGlow(
+        selectedColor = selectedColor,
+        unselectedColor = unselectedColor,
+        selectedRadius = selectedRadius,
+        unselectedRadius = unselectedRadius,
+        selectedBlur = selectedBlur,
+        unselectedBlur = unselectedBlur
+    )
+
+    /**
      * Defines which shapes are used for the selected and unselected indicators.
      *
      * - You can supply **any** list of [RoundedPolygon] shapes.
@@ -126,5 +199,10 @@ object ShapeIndicatorDefaults {
     )
 
     val defaultUnselectedShapes = listOf(MaterialShapes.Circle)
+    val defaultSelectedShapeSize = 16.dp
+    val defaultUnselectedShapeSize = 10.dp
+    val defaultBorderWidth = 2.dp
+    val defaultGlowRadius = 4.dp
+    val defaultGlowBlur = 6.dp
 }
 

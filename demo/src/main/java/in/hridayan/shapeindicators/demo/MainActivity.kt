@@ -85,7 +85,11 @@ fun DemoScreen() {
             pagerState = pagerState,
             modifier = Modifier.padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            sizes = ShapeIndicatorDefaults.sizes(selectedSize = 16.dp)
+            sizes = ShapeIndicatorDefaults.sizes(selectedSize = 16.dp),
+            glow = ShapeIndicatorDefaults.glow(
+                selectedRadius = ShapeIndicatorDefaults.defaultGlowRadius,
+                selectedBlur = ShapeIndicatorDefaults.defaultGlowBlur
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))

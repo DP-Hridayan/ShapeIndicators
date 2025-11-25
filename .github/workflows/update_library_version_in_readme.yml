@@ -37,11 +37,13 @@ jobs:
           # Update TOML snippet
           sed -i "s/shapeindicators = \"[0-9.]\+\"/shapeindicators = \"$VERSION\"/" README.md || true
 
-      # 4️⃣ Commit & push changes
+      # 4️⃣ Commit & push changes using GITHUB_TOKEN
       - name: Commit & Push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           git diff --quiet || git commit -m "Update ShapeIndicators version in README to ${{ steps.get_version.outputs.latest_version }}"
-          git push
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${GITHUB_REF#refs/heads/}

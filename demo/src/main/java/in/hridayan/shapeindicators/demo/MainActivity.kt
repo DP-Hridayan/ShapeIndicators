@@ -82,7 +82,7 @@ fun DemoScreen() {
         ShapeIndicatorRow(
             pagerState = pagerState,
             modifier = Modifier.padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))

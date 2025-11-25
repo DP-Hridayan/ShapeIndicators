@@ -1,0 +1,47 @@
+name: Update ShapeIndicators Version in README
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1' # every Monday at 3:00 UTC, adjust as needed
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Get latest version from Maven Central
+      - name: Get latest ShapeIndicators version
+        id: get_version
+        run: |
+          LATEST=$(curl -s "https://search.maven.org/solrsearch/select?q=g:io.github.dp-hridayan+AND+a:shapeindicators&rows=1&wt=json" \
+            | jq -r '.response.docs[0].latestVersion')
+          echo "Latest version: $LATEST"
+          echo "latest_version=$LATEST" >> $GITHUB_OUTPUT
+
+      # 3️⃣ Update README usage snippets
+      - name: Update README
+        run: |
+          VERSION=${{ steps.get_version.outputs.latest_version }}
+          echo "Updating README to use version $VERSION"
+
+          # Update Groovy snippet
+          sed -i "s/implementation \"io.github.dp-hridayan:shapeindicators:[0-9.]\+\"/implementation \"io.github.dp-hridayan:shapeindicators:$VERSION\"/" README.md || true
+
+          # Update Kotlin snippet
+          sed -i "s/implementation(\"io.github.dp-hridayan:shapeindicators:[0-9.]\+\")/implementation(\"io.github.dp-hridayan:shapeindicators:$VERSION\")/" README.md || true
+
+          # Update TOML snippet
+          sed -i "s/shapeindicators = \"[0-9.]\+\"/shapeindicators = \"$VERSION\"/" README.md || true
+
+      # 4️⃣ Commit & push changes
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --quiet || git commit -m "Update ShapeIndicators version in README to ${{ steps.get_version.outputs.latest_version }}"
+          git push

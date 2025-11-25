@@ -3,7 +3,7 @@ name: Update ShapeIndicators Version in README
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * 1' # every Monday at 3:00 UTC, adjust as needed
+    - cron: '0 3 * * 1' # every Monday at 3:00 UTC
 
 jobs:
   update-readme:
@@ -13,12 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Get latest version from Maven Central
+      # 2️⃣ Get latest version from Maven Central metadata
       - name: Get latest ShapeIndicators version
         id: get_version
         run: |
-          LATEST=$(curl -s "https://search.maven.org/solrsearch/select?q=g:io.github.dp-hridayan+AND+a:shapeindicators&rows=1&wt=json" \
-            | jq -r '.response.docs[0].latestVersion')
+          LATEST=$(curl -s https://repo1.maven.org/maven2/io/github/dp-hridayan/shapeindicators/maven-metadata.xml \
+            | grep -oPm1 "(?<=<latest>)[^<]+")
           echo "Latest version: $LATEST"
           echo "latest_version=$LATEST" >> $GITHUB_OUTPUT
 

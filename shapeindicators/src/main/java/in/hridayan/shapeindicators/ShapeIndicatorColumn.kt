@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -110,6 +112,7 @@ fun ShapeIndicatorColumn(
     colors: ShapeIndicatorColors = ShapeIndicatorDefaults.colors(),
     borders: ShapeIndicatorBorders = ShapeIndicatorDefaults.borders(),
     glow: ShapeIndicatorGlow = ShapeIndicatorDefaults.glow(),
+    overflow: ShapeIndicatorOverflow = ShapeIndicatorDefaults.overflow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
     onIndicatorClick: ((index: Int) -> Unit)? = null,
@@ -127,17 +130,55 @@ fun ShapeIndicatorColumn(
     val selectedColor = colors.selectedColor
     val unselectedColor = colors.unselectedColor
 
-    val minColumnWidth = maxOf(selectedSize, unselectedSize)
+    val maxItemSize = maxOf(selectedSize, unselectedSize)
+
+    val currentPage = pagerState.currentPage
+    val offset = pagerState.currentPageOffsetFraction
+
+    val windowStart = remember { mutableIntStateOf(0) }
+
+    val usableSlots = if (overflow.enabled) overflow.maxVisibleItems - 1 else pageCount
+
+    LaunchedEffect(currentPage) {
+
+        val firstHintIndex = windowStart.intValue
+        val lastHintIndex = windowStart.intValue + usableSlots
+
+        val lastSafeIndex = lastHintIndex - 1
+        val firstSafeIndex = firstHintIndex + 1
+
+        when {
+            currentPage > lastSafeIndex -> {
+                windowStart.intValue = (currentPage - usableSlots + 1)
+                    .coerceAtMost(pageCount - usableSlots - 1)
+            }
+
+            currentPage < firstSafeIndex -> {
+                windowStart.intValue = (currentPage - 1)
+                    .coerceAtLeast(0)
+            }
+        }
+    }
+
+    val startIndex = windowStart.intValue
+
+    val hasLeftOverflow = startIndex > 0
+    val hasRightOverflow = startIndex + usableSlots < pageCount - 1
+
+    val endIndex =
+        if (hasRightOverflow)
+            startIndex + usableSlots
+        else
+            (startIndex + usableSlots).coerceAtMost(pageCount - 1)
 
     Column(
-        modifier = modifier.widthIn(min = minColumnWidth),
+        modifier = modifier.widthIn(min = maxItemSize),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement
     ) {
-        val currentPage = pagerState.currentPage
-        val offset = pagerState.currentPageOffsetFraction
 
-        repeat(pageCount) { index ->
+        for (index in startIndex..endIndex) {
+
             val targetShapeSize = interpolateForIndex(
                 index,
                 currentPage,
@@ -199,8 +240,19 @@ fun ShapeIndicatorColumn(
                 ::lerpSize
             )
 
-            val animatedShapeSize by animateDpAsState(targetShapeSize)
-            val animatedShapeColor by animateColorAsState(targetShapeColor)
+            val isRightHint = index == endIndex && hasRightOverflow && index != currentPage
+            val isLeftHint = index == startIndex && hasLeftOverflow && index != currentPage
+
+            val overflowSize =
+                if (isLeftHint || isRightHint) overflow.hintShapeSize else targetShapeSize
+
+            val animatedShapeSize by animateDpAsState(overflowSize)
+            val animatedShapeColor by animateColorAsState(
+                if (isLeftHint || isRightHint)
+                    targetShapeColor.copy(alpha = 0.6f)
+                else
+                    targetShapeColor
+            )
             val animatedBorderWidth by animateDpAsState(targetBorderWidth)
             val animatedBorderColor by animateColorAsState(targetBorderColor)
             val animatedGlowRadius by animateDpAsState(targetGlowRadius)
@@ -209,7 +261,7 @@ fun ShapeIndicatorColumn(
 
             Box(
                 modifier = Modifier
-                    .size(selectedSize)
+                    .size(maxItemSize)
                     .pointerInput(onIndicatorClick) {
                         if (onIndicatorClick == null) return@pointerInput
                         detectTapGestures { onIndicatorClick(index) }

@@ -113,9 +113,9 @@ fun ShapeIndicatorRow(
     colors: ShapeIndicatorColors = ShapeIndicatorDefaults.colors(),
     borders: ShapeIndicatorBorders = ShapeIndicatorDefaults.borders(),
     glow: ShapeIndicatorGlow = ShapeIndicatorDefaults.glow(),
+    overflow: ShapeIndicatorOverflow = ShapeIndicatorDefaults.overflow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
-    maxVisibleIndicators: Int = ShapeIndicatorDefaults.MAX_VISIBLE_INDICATORS,
     onIndicatorClick: ((index: Int) -> Unit)? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically
@@ -138,7 +138,7 @@ fun ShapeIndicatorRow(
 
     val windowStart = remember { mutableIntStateOf(0) }
 
-    val usableSlots = maxVisibleIndicators - 1
+    val usableSlots = if (overflow.enabled) overflow.maxVisibleItems - 1 else pageCount
 
     LaunchedEffect(currentPage) {
 
@@ -245,15 +245,8 @@ fun ShapeIndicatorRow(
             val isRightHint = index == endIndex && hasRightOverflow && index != currentPage
             val isLeftHint = index == startIndex && hasLeftOverflow && index != currentPage
 
-
-            val hintScale = 0.55f
-
             val overflowSize =
-                if (isLeftHint || isRightHint)
-                    unselectedSize * hintScale
-                else
-                    targetShapeSize
-
+                if (isLeftHint || isRightHint) overflow.hintShapeSize else targetShapeSize
 
             val animatedShapeSize by animateDpAsState(overflowSize)
             val animatedShapeColor by animateColorAsState(

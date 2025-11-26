@@ -35,6 +35,12 @@ data class ShapeIndicatorGlow(
     val unselectedBlur: Dp
 )
 
+data class ShapeIndicatorOverflow(
+    val enabled: Boolean,
+    val maxVisibleItems: Int,
+    val hintShapeSize: Dp
+)
+
 data class IndicatorShapes(
     val selectedShapes: List<RoundedPolygon>,
     val unselectedShapes: List<RoundedPolygon>
@@ -169,6 +175,12 @@ object ShapeIndicatorDefaults {
         unselectedBlur = unselectedBlur
     )
 
+    fun overflow(
+        enabled: Boolean = true,
+        maxVisibleItems: Int = MAX_VISIBLE_ITEMS,
+        hintShapeSize: Dp = overflowHintShapeSize
+    ) = ShapeIndicatorOverflow(enabled, maxVisibleItems, hintShapeSize)
+
     /**
      * Defines which shapes are used for the selected and unselected indicators.
      *
@@ -204,6 +216,7 @@ object ShapeIndicatorDefaults {
     val defaultBorderWidth = 2.dp
     val defaultGlowRadius = 4.dp
     val defaultGlowBlur = 6.dp
-    const val MAX_VISIBLE_INDICATORS = 5
+    const val MAX_VISIBLE_ITEMS = 5
+    val overflowHintShapeSize = 6.dp
 }
 

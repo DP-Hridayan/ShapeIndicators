@@ -1,0 +1,34 @@
+name: Update ShapeIndicators Version in README
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest ShapeIndicators version
+        id: get_version
+        run: |
+          LATEST=$(curl -s "https://repo1.maven.org/maven2/io/github/dp-hridayan/shapeindicators/maven-metadata.xml" \
+            | grep -oPm1 "(?<=<latest>)[^<]+")
+          echo "LATEST_VERSION=$LATEST" >> $GITHUB_ENV
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - run: python3 .github/scripts/update_readme.py
+
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --quiet || git commit -m "Update ShapeIndicators version in README to $LATEST_VERSION"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

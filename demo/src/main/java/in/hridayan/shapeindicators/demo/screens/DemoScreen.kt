@@ -108,6 +108,7 @@ fun DemoScreen() {
             modifier = Modifier.padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             sizes = ShapeIndicatorDefaults.sizes(selectedSize = 16.dp),
+            shuffleShapes = true,
             glow = ShapeIndicatorDefaults.glow(
                 selectedRadius = ShapeIndicatorDefaults.defaultGlowRadius,
                 selectedBlur = ShapeIndicatorDefaults.defaultGlowBlur

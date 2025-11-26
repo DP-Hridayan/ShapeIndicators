@@ -7,9 +7,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
@@ -55,7 +55,6 @@ import kotlin.math.abs
  *
  * @param glow Defines glow color, radius, and blur for both states.
  * Use [ShapeIndicatorDefaults.glow].
- * Glow appears behind indicators and animates during scroll.
  *
  * @param shapes Defines selected/unselected shapes.
  * Use [ShapeIndicatorDefaults.shapes].
@@ -70,9 +69,9 @@ import kotlin.math.abs
  * - Useful for jumping the pager to a specific page.
  * - Can also be used for analytics or custom UI reactions.
  *
- * @param horizontalArrangement Spacing between indicators.
+ * @param horizontalAlignment Horizontal alignment of indicators.
  *
- * @param verticalAlignment Vertical alignment of indicators.
+ * @param verticalArrangement Arrangement between indicators.
  *
  * ## Behavior
  * Indicators smoothly animate between **unselected → selected** states using:
@@ -104,7 +103,7 @@ import kotlin.math.abs
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-fun ShapeIndicatorRow(
+fun ShapeIndicatorColumn(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     sizes: ShapeIndicatorSizes = ShapeIndicatorDefaults.sizes(),
@@ -114,8 +113,8 @@ fun ShapeIndicatorRow(
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
     onIndicatorClick: ((index: Int) -> Unit)? = null,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    verticalArrangement: Arrangement.Vertical = Arrangement.SpaceBetween
 ) {
     val pageCount = pagerState.pageCount
 
@@ -128,14 +127,13 @@ fun ShapeIndicatorRow(
     val selectedColor = colors.selectedColor
     val unselectedColor = colors.unselectedColor
 
-    val minRowHeight = maxOf(selectedSize, unselectedSize)
+    val minColumnWidth = maxOf(selectedSize, unselectedSize)
 
-    Row(
-        modifier = modifier.heightIn(min = minRowHeight),
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment
+    Column(
+        modifier = modifier.widthIn(min = minColumnWidth),
+        horizontalAlignment = horizontalAlignment,
+        verticalArrangement = verticalArrangement
     ) {
-
         val currentPage = pagerState.currentPage
         val offset = pagerState.currentPageOffsetFraction
 

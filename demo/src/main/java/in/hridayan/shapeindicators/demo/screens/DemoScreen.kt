@@ -62,12 +62,7 @@ fun DemoScreen() {
                 glow = ShapeIndicatorDefaults.glow(
                     selectedRadius = ShapeIndicatorDefaults.defaultGlowRadius,
                     selectedBlur = ShapeIndicatorDefaults.defaultGlowBlur
-                ),
-                onIndicatorClick = { index ->
-                    scope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                }
+                )
             )
 
             HorizontalPager(
@@ -112,14 +107,8 @@ fun DemoScreen() {
             glow = ShapeIndicatorDefaults.glow(
                 selectedRadius = ShapeIndicatorDefaults.defaultGlowRadius,
                 selectedBlur = ShapeIndicatorDefaults.defaultGlowBlur
-            ),
-            onIndicatorClick = { index ->
-                scope.launch {
-                    pagerState.animateScrollToPage(index)
-                }
-            }
+            )
         )
-
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -64,14 +64,6 @@ import kotlin.math.abs
  *
  * @param shuffleShapes If true, shape lists are shuffled once and indicators cycle through them.
  *
- * @param onIndicatorClick Optional click listener for each indicator.
- *
- * If provided, every indicator becomes individually clickable **without ripple**
- *
- * The callback receives the tapped indicator’s index:
- * - Useful for jumping the pager to a specific page.
- * - Can also be used for analytics or custom UI reactions.
- *
  * @param horizontalArrangement Spacing between indicators.
  *
  * @param verticalAlignment Vertical alignment of indicators.
@@ -116,7 +108,6 @@ fun ShapeIndicatorRow(
     overflow: ShapeIndicatorOverflow = ShapeIndicatorDefaults.overflow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
-    onIndicatorClick: ((index: Int) -> Unit)? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically
 ) {
@@ -133,8 +124,7 @@ fun ShapeIndicatorRow(
             glow = glow,
             overflow = overflow,
             shapes = shapes,
-            shuffleShapes = shuffleShapes,
-            onIndicatorClick = onIndicatorClick
+            shuffleShapes = shuffleShapes
         )
     }
 }

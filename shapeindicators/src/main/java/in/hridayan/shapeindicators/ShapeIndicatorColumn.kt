@@ -42,14 +42,6 @@ import androidx.compose.ui.Modifier
  *
  * @param shuffleShapes If true, shape lists are shuffled once and indicators cycle through them.
  *
- * @param onIndicatorClick Optional click listener for each indicator.
- *
- * If provided, every indicator becomes individually clickable **without ripple**
- *
- * The callback receives the tapped indicator’s index:
- * - Useful for jumping the pager to a specific page.
- * - Can also be used for analytics or custom UI reactions.
- *
  * @param horizontalAlignment Horizontal alignment of indicators.
  *
  * @param verticalArrangement Arrangement between indicators.
@@ -94,7 +86,6 @@ fun ShapeIndicatorColumn(
     overflow: ShapeIndicatorOverflow = ShapeIndicatorDefaults.overflow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
-    onIndicatorClick: ((index: Int) -> Unit)? = null,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     verticalArrangement: Arrangement.Vertical = Arrangement.SpaceBetween
 ) {
@@ -111,8 +102,7 @@ fun ShapeIndicatorColumn(
             glow = glow,
             overflow = overflow,
             shapes = shapes,
-            shuffleShapes = shuffleShapes,
-            onIndicatorClick = onIndicatorClick
+            shuffleShapes = shuffleShapes
         )
     }
 }

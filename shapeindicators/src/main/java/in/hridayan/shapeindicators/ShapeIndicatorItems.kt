@@ -2,7 +2,6 @@ package `in`.hridayan.shapeindicators
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.toPath
 import `in`.hridayan.shapeindicators.utils.interpolateForIndex
@@ -41,7 +39,6 @@ internal fun ShapeIndicatorItems(
     overflow: ShapeIndicatorOverflow,
     shapes: IndicatorShapes,
     shuffleShapes: Boolean,
-    onIndicatorClick: ((index: Int) -> Unit)?
 ) {
     val pageCount = pagerState.pageCount
 
@@ -181,10 +178,7 @@ internal fun ShapeIndicatorItems(
         Box(
             modifier = Modifier
                 .size(maxItemSize)
-                .pointerInput(onIndicatorClick) {
-                    if (onIndicatorClick == null) return@pointerInput
-                    detectTapGestures { onIndicatorClick(index ) }
-                }) {
+        ) {
             Box(
                 modifier = Modifier
                     .size(animatedShapeSize)

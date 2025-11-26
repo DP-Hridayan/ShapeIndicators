@@ -204,5 +204,6 @@ object ShapeIndicatorDefaults {
     val defaultBorderWidth = 2.dp
     val defaultGlowRadius = 4.dp
     val defaultGlowBlur = 6.dp
+    const val MAX_VISIBLE_INDICATORS = 5
 }
 

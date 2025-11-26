@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DemoScreen() {
     val view = LocalView.current
-    val pagerState = rememberPagerState { 5 }
+    val pagerState = rememberPagerState { 9 }
     val scope = rememberCoroutineScope()
 
     val pagerHeight = 250.dp

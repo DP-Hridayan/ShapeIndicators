@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -113,6 +115,7 @@ fun ShapeIndicatorRow(
     glow: ShapeIndicatorGlow = ShapeIndicatorDefaults.glow(),
     shapes: IndicatorShapes = ShapeIndicatorDefaults.shapes(),
     shuffleShapes: Boolean = false,
+    maxVisibleIndicators: Int = ShapeIndicatorDefaults.MAX_VISIBLE_INDICATORS,
     onIndicatorClick: ((index: Int) -> Unit)? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically
@@ -130,16 +133,54 @@ fun ShapeIndicatorRow(
 
     val minRowHeight = maxOf(selectedSize, unselectedSize)
 
+    val currentPage = pagerState.currentPage
+    val offset = pagerState.currentPageOffsetFraction
+
+    val windowStart = remember { mutableIntStateOf(0) }
+
+    val usableSlots = maxVisibleIndicators - 1
+
+    LaunchedEffect(currentPage) {
+
+        val firstHintIndex = windowStart.intValue
+        val lastHintIndex = windowStart.intValue + usableSlots
+
+        val lastSafeIndex = lastHintIndex - 1
+        val firstSafeIndex = firstHintIndex + 1
+
+        when {
+            currentPage > lastSafeIndex -> {
+                windowStart.intValue = (currentPage - usableSlots + 1)
+                    .coerceAtMost(pageCount - usableSlots - 1)
+            }
+
+            currentPage < firstSafeIndex -> {
+                windowStart.intValue = (currentPage - 1)
+                    .coerceAtLeast(0)
+            }
+        }
+    }
+
+    val startIndex = windowStart.intValue
+
+    val hasLeftOverflow = startIndex > 0
+    val hasRightOverflow = startIndex + usableSlots < pageCount - 1
+
+    val endIndex =
+        if (hasRightOverflow)
+            startIndex + usableSlots
+        else
+            (startIndex + usableSlots).coerceAtMost(pageCount - 1)
+
+
     Row(
         modifier = modifier.heightIn(min = minRowHeight),
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment
     ) {
 
-        val currentPage = pagerState.currentPage
-        val offset = pagerState.currentPageOffsetFraction
+        for (index in startIndex..endIndex) {
 
-        repeat(pageCount) { index ->
             val targetShapeSize = interpolateForIndex(
                 index,
                 currentPage,
@@ -201,8 +242,26 @@ fun ShapeIndicatorRow(
                 ::lerpSize
             )
 
-            val animatedShapeSize by animateDpAsState(targetShapeSize)
-            val animatedShapeColor by animateColorAsState(targetShapeColor)
+            val isRightHint = index == endIndex && hasRightOverflow && index != currentPage
+            val isLeftHint = index == startIndex && hasLeftOverflow && index != currentPage
+
+
+            val hintScale = 0.55f
+
+            val overflowSize =
+                if (isLeftHint || isRightHint)
+                    unselectedSize * hintScale
+                else
+                    targetShapeSize
+
+
+            val animatedShapeSize by animateDpAsState(overflowSize)
+            val animatedShapeColor by animateColorAsState(
+                if (isLeftHint || isRightHint)
+                    targetShapeColor.copy(alpha = 0.6f)
+                else
+                    targetShapeColor
+            )
             val animatedBorderWidth by animateDpAsState(targetBorderWidth)
             val animatedBorderColor by animateColorAsState(targetBorderColor)
             val animatedGlowRadius by animateDpAsState(targetGlowRadius)

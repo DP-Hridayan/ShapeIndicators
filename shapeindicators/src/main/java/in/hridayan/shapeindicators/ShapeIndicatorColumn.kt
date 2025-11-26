@@ -37,6 +37,9 @@ import androidx.compose.ui.Modifier
  * @param glow Defines glow color, radius, and blur for both states.
  * Use [ShapeIndicatorDefaults.glow].
  *
+ * @param overflow Enables indicator collapsing behavior when items exceed available space.
+ * Shows animated hint dots on edges indicating hidden pages.
+ *
  * @param shapes Defines selected/unselected shapes.
  * Use [ShapeIndicatorDefaults.shapes].
  *

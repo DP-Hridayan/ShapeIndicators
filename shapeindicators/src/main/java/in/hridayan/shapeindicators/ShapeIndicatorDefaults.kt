@@ -175,6 +175,16 @@ object ShapeIndicatorDefaults {
         unselectedBlur = unselectedBlur
     )
 
+    /**
+     * Enables indicator overflow handling when total pages exceed visible space.
+     *
+     * @param enabled Enables or disables overflow behavior.
+     * If false, all indicators are rendered without limits.
+     *
+     * @param maxVisibleItems Maximum number of indicators allowed at once.
+     *
+     * @param hintShapeSize Size of the hint indicators shown at the edges.
+     */
     fun overflow(
         enabled: Boolean = true,
         maxVisibleItems: Int = MAX_VISIBLE_ITEMS,

@@ -2,35 +2,14 @@
 
 package `in`.hridayan.shapeindicators
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.asAndroidPath
-import androidx.compose.ui.graphics.asComposePath
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.graphics.shapes.Morph
-import androidx.graphics.shapes.toPath
-import kotlin.math.abs
 
 /**
  * Displays a morphing Material–shape indicator row for a pager.
@@ -58,6 +37,9 @@ import kotlin.math.abs
  * @param glow Defines glow color, radius, and blur for both states.
  * Use [ShapeIndicatorDefaults.glow].
  * Glow appears behind indicators and animates during scroll.
+ *
+ * @param overflow Enables indicator collapsing behavior when items exceed available space.
+ * Shows animated hint dots on edges indicating hidden pages.
  *
  * @param shapes Defines selected/unselected shapes.
  * Use [ShapeIndicatorDefaults.shapes].

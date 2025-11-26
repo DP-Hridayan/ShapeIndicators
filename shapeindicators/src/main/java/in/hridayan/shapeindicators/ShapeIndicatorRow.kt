@@ -131,7 +131,7 @@ fun ShapeIndicatorRow(
     val selectedColor = colors.selectedColor
     val unselectedColor = colors.unselectedColor
 
-    val minRowHeight = maxOf(selectedSize, unselectedSize)
+    val maxItemSize = maxOf(selectedSize, unselectedSize)
 
     val currentPage = pagerState.currentPage
     val offset = pagerState.currentPageOffsetFraction
@@ -174,7 +174,7 @@ fun ShapeIndicatorRow(
 
 
     Row(
-        modifier = modifier.heightIn(min = minRowHeight),
+        modifier = modifier.heightIn(min = maxItemSize),
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment
     ) {
@@ -270,7 +270,7 @@ fun ShapeIndicatorRow(
 
             Box(
                 modifier = Modifier
-                    .size(selectedSize)
+                    .size(maxItemSize)
                     .pointerInput(onIndicatorClick) {
                         if (onIndicatorClick == null) return@pointerInput
                         detectTapGestures { onIndicatorClick(index) }

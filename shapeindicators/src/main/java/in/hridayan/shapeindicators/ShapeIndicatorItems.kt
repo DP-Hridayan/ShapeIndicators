@@ -24,6 +24,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.toPath
+import `in`.hridayan.shapeindicators.utils.interpolateForIndex
+import `in`.hridayan.shapeindicators.utils.lerpColor
+import `in`.hridayan.shapeindicators.utils.lerpSize
+import `in`.hridayan.shapeindicators.utils.safeBlurMaskFilter
+import `in`.hridayan.shapeindicators.utils.scaled
 import kotlin.math.abs
 
 @Composable
@@ -178,7 +183,7 @@ internal fun ShapeIndicatorItems(
                 .size(maxItemSize)
                 .pointerInput(onIndicatorClick) {
                     if (onIndicatorClick == null) return@pointerInput
-                    detectTapGestures { onIndicatorClick(index) }
+                    detectTapGestures { onIndicatorClick(index ) }
                 }) {
             Box(
                 modifier = Modifier

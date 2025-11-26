@@ -1,8 +1,9 @@
-package `in`.hridayan.shapeindicators
+package `in`.hridayan.shapeindicators.utils
 
 import android.graphics.BlurMaskFilter
 import androidx.collection.FloatFloatPair
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.Dp
 import androidx.graphics.shapes.RoundedPolygon
 import kotlin.math.abs
@@ -11,12 +12,12 @@ internal fun lerpSize(start: Dp, end: Dp, f: Float): Dp =
     start + (end - start) * f.coerceIn(0f, 1f)
 
 internal fun lerpColor(start: Color, end: Color, f: Float): Color =
-    androidx.compose.ui.graphics.lerp(start, end, f.coerceIn(0f, 1f))
+    lerp(start, end, f.coerceIn(0f, 1f))
 
 internal fun RoundedPolygon.scaled(scale: Float): RoundedPolygon =
     transformed { x, y -> FloatFloatPair(x * scale, y * scale) }
 
-inline fun <T> interpolateForIndex(
+internal inline fun <T> interpolateForIndex(
     index: Int,
     currentPage: Int,
     offset: Float,
@@ -32,7 +33,7 @@ inline fun <T> interpolateForIndex(
     }
 }
 
-fun safeBlurMaskFilter(radius: Float): BlurMaskFilter? {
+internal fun safeBlurMaskFilter(radius: Float): BlurMaskFilter? {
     return if (radius > 0f && radius < 3000f) {
         try {
             BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL)

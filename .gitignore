@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# GPG signing keys - NEVER commit these
+secret-key.asc
+*.pgp

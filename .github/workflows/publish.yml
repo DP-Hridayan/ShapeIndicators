@@ -1,0 +1,39 @@
+name: Publish to Maven Central
+
+on:
+  release:
+    types: [ published ]   # triggers when you create a GitHub Release
+  workflow_dispatch:        # also allows manual trigger from Actions tab
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Publish to Maven Central
+        run: ./gradlew :shapeindicators:publishAllPublicationsToMavenCentralRepository --no-daemon
+        env:
+          # Maven Central credentials (Sonatype portal)
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+
+          # GPG signing — key stored as a GitHub Secret (base64-encoded)
+          # To encode your key: gpg --export-secret-keys KEY_ID | base64 > key.b64
+          # Or for .asc:        base64 secret-key.asc
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SECRET_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}

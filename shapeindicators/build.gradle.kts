@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
 }
@@ -33,7 +32,6 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.ui.tooling)
-    implementation(libs.material)
     implementation(libs.material3)
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -44,7 +42,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.dp-hridayan",
         artifactId = "shapeindicators",
-        version = "2.0.0"
+        version = "2.1.1"
     )
 
     pom {

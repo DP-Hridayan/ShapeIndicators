@@ -1,19 +1,18 @@
 [versions]
-activityCompose = "1.12.0"
-agp = "8.13.1"
-composeBom = "2025.11.01"
-coreKtx = "1.17.0"
-kotlin = "2.2.21"
-material = "1.13.0"
-material3 = "1.5.0-alpha09"
+activityCompose = "1.13.0"
+agp = "9.2.1"
+composeBom = "2026.06.00"
+coreKtx = "1.19.0"
+kotlin = "2.4.0"
+material = "1.14.0"
+material3 = "1.5.0-alpha22"
 materialIconsExtended = "1.7.8"
 appcompat = "1.7.1"
-vanniktech-maven-publish = "0.35.0"
+vanniktech-maven-publish = "0.37.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-maven-publish"}
 

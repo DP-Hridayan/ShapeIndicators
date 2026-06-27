@@ -3,7 +3,7 @@ name: Release Demo APK
 on:
   push:
     tags:
-      - 'v*'   # triggers on any tag like v1.0, v2.1.0, etc.
+      - '*'   # triggers on any tag like v1.0, v2.1.0, etc.
 
 jobs:
   build-and-release:

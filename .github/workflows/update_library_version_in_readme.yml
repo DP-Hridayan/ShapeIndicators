@@ -9,7 +9,7 @@ jobs:
   update-readme:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get latest ShapeIndicators version
         id: get_version
@@ -18,7 +18,7 @@ jobs:
             | grep -oPm1 "(?<=<latest>)[^<]+")
           echo "LATEST_VERSION=$LATEST" >> $GITHUB_ENV
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 

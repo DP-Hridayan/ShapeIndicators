@@ -16,7 +16,7 @@
 ➤ `build.gradle`
 ```gradle
 dependencies {
-    implementation "io.github.dp-hridayan:shapeindicators:1.0.1"
+    implementation "io.github.dp-hridayan:shapeindicators:2.1.1"
 }
 ```
 </br>
@@ -24,7 +24,7 @@ dependencies {
 ➤ `build.gradle.kts`
 ```kotlin
 dependencies {
-    implementation("io.github.dp-hridayan:shapeindicators:1.0.1")
+    implementation("io.github.dp-hridayan:shapeindicators:2.1.1")
 }
 ```
 </br>
@@ -33,7 +33,7 @@ dependencies {
 ```toml
 # libs.versions.toml
 [versions]
-shapeindicators = "1.0.1"
+shapeindicators = "2.1.1"
 ```
 
 ```toml

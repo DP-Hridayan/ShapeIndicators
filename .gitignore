@@ -9,4 +9,5 @@
 /.kotlin
 .externalNativeBuild
 .cxx
+public-key.asc
 local.properties

@@ -95,11 +95,11 @@ fun DemoScreen() {
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     sizes = ShapeIndicatorDefaults.sizes(selectedSize = 16.dp),
                     glow = ShapeIndicatorDefaults.glow(
-                        selectedRadius = if (glowEnabled) ShapeIndicatorDefaults.defaultGlowRadius else 0.dp,
-                        selectedBlur = if (glowEnabled) ShapeIndicatorDefaults.defaultGlowBlur else 0.dp,
+                        selectedRadius = if (glowEnabled) ShapeIndicatorDefaults.glowRadius else 0.dp,
+                        selectedBlur = if (glowEnabled) ShapeIndicatorDefaults.glowBlur else 0.dp,
                     ),
                     borders = ShapeIndicatorDefaults.borders(
-                        selectedWidth = if (borderEnabled) ShapeIndicatorDefaults.defaultBorderWidth else 0.dp,
+                        selectedWidth = if (borderEnabled) ShapeIndicatorDefaults.borderWidth else 0.dp,
                     ),
                     shuffleShapes = shuffleEnabled,
                     overflow = ShapeIndicatorDefaults.overflow(enabled = overflowEnabled),
@@ -136,11 +136,11 @@ fun DemoScreen() {
                 sizes = ShapeIndicatorDefaults.sizes(selectedSize = 16.dp),
                 shuffleShapes = shuffleEnabled,
                 glow = ShapeIndicatorDefaults.glow(
-                    selectedRadius = if (glowEnabled) ShapeIndicatorDefaults.defaultGlowRadius else 0.dp,
-                    selectedBlur = if (glowEnabled) ShapeIndicatorDefaults.defaultGlowBlur else 0.dp,
+                    selectedRadius = if (glowEnabled) ShapeIndicatorDefaults.glowRadius else 0.dp,
+                    selectedBlur = if (glowEnabled) ShapeIndicatorDefaults.glowBlur else 0.dp,
                 ),
                 borders = ShapeIndicatorDefaults.borders(
-                    selectedWidth = if (borderEnabled) ShapeIndicatorDefaults.defaultBorderWidth else 0.dp,
+                    selectedWidth = if (borderEnabled) ShapeIndicatorDefaults.borderWidth else 0.dp,
                 ),
                 overflow = ShapeIndicatorDefaults.overflow(enabled = overflowEnabled),
             )

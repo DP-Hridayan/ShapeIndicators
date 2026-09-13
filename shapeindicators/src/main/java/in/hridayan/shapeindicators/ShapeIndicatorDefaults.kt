@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ data class ShapeIndicatorOverflow(
     val hintShapeSize: Dp
 )
 
+@Immutable
 data class IndicatorShapes(
     val selectedShapes: List<RoundedPolygon>,
     val unselectedShapes: List<RoundedPolygon>
@@ -56,8 +58,8 @@ object ShapeIndicatorDefaults {
      */
     @Composable
     fun colors(
-        selectedColor: Color = MaterialTheme.colorScheme.primary,
-        unselectedColor: Color = MaterialTheme.colorScheme.surfaceVariant
+        selectedColor: Color = selectedShapeColor,
+        unselectedColor: Color = unselectedShapeColor,
     ) = ShapeIndicatorColors(selectedColor, unselectedColor)
 
     /**
@@ -67,8 +69,8 @@ object ShapeIndicatorDefaults {
      * @param unselectedSize Size of the indicator shape when it is not selected
      */
     fun sizes(
-        selectedSize: Dp = defaultSelectedShapeSize,
-        unselectedSize: Dp = defaultUnselectedShapeSize
+        selectedSize: Dp = selectedShapeSize,
+        unselectedSize: Dp = unselectedShapeSize
     ) = ShapeIndicatorSizes(selectedSize, unselectedSize)
 
     /**
@@ -100,10 +102,10 @@ object ShapeIndicatorDefaults {
      */
     @Composable
     fun borders(
-        selectedWidth: Dp = 0.dp,
-        unselectedWidth: Dp = 0.dp,
-        selectedColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-        unselectedColor: Color = MaterialTheme.colorScheme.outlineVariant
+        selectedWidth: Dp = noBorder,
+        unselectedWidth: Dp = noBorder,
+        selectedColor: Color = selectedBorderColor,
+        unselectedColor: Color = unselectedBorderColor
     ) = ShapeIndicatorBorders(
         selectedWidth = selectedWidth,
         unselectedWidth = unselectedWidth,
@@ -160,12 +162,12 @@ object ShapeIndicatorDefaults {
      */
     @Composable
     fun glow(
-        selectedColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
-        unselectedColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
-        selectedRadius: Dp = 0.dp,
-        unselectedRadius: Dp = 0.dp,
-        selectedBlur: Dp = 0.dp,
-        unselectedBlur: Dp = 0.dp
+        selectedColor: Color = selectedGlowColor,
+        unselectedColor: Color = unselectedGlowColor,
+        selectedRadius: Dp = noGlowRadius,
+        unselectedRadius: Dp = noGlowRadius,
+        selectedBlur: Dp = noGlowBlur,
+        unselectedBlur: Dp = noGlowBlur
     ): ShapeIndicatorGlow = ShapeIndicatorGlow(
         selectedColor = selectedColor,
         unselectedColor = unselectedColor,
@@ -207,11 +209,16 @@ object ShapeIndicatorDefaults {
      */
     @Composable
     fun shapes(
-        selectedShapes: List<RoundedPolygon> = defaultSelectedShapes,
-        unselectedShapes: List<RoundedPolygon> = defaultUnselectedShapes
+        selectedShapes: List<RoundedPolygon> = ShapeIndicatorDefaults.selectedShapes,
+        unselectedShapes: List<RoundedPolygon> = ShapeIndicatorDefaults.unselectedShapes
     ) = IndicatorShapes(selectedShapes, unselectedShapes)
 
-    val defaultSelectedShapes = listOf(
+
+    /**
+     * Default list of shapes used for selected indicators.
+     * Includes various Material 3 expressive shapes.
+     */
+    val selectedShapes = listOf(
         MaterialShapes.SoftBurst,
         MaterialShapes.Arrow,
         MaterialShapes.Cookie4Sided,
@@ -220,13 +227,154 @@ object ShapeIndicatorDefaults {
         MaterialShapes.Pentagon,
     )
 
-    val defaultUnselectedShapes = listOf(MaterialShapes.Circle)
-    val defaultSelectedShapeSize = 16.dp
-    val defaultUnselectedShapeSize = 10.dp
-    val defaultBorderWidth = 2.dp
-    val defaultGlowRadius = 4.dp
-    val defaultGlowBlur = 6.dp
+    /**
+     * Default list of shapes used for unselected indicators.
+     * By default, unselected indicators are circles.
+     */
+    val unselectedShapes = listOf(MaterialShapes.Circle)
+
+    /**
+     * Default size for selected indicators.
+     */
+    val selectedShapeSize = 16.dp
+
+    /**
+     * Default size for unselected indicators.
+     */
+    val unselectedShapeSize = 8.dp
+
+    /**
+     * Default border width when borders are disabled.
+     */
+    val noBorder = 0.dp
+
+    /**
+     * Default border width.
+     */
+    val borderWidth = 2.dp
+
+    /**
+     * Default glow radius when glow is disabled.
+     */
+    val noGlowRadius = 0.dp
+
+    /**
+     * Default glow blur when glow is disabled.
+     */
+    val noGlowBlur = 0.dp
+
+    /**
+     * Default glow radius.
+     */
+    val glowRadius = 4.dp
+
+    /**
+     * Default glow blur.
+     */
+    val glowBlur = 6.dp
+
+    /**
+     * Default glow color for selected indicators.
+     */
+    val selectedGlowColor: Color @Composable get() = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f)
+
+    /**
+     * Default glow color for unselected indicators.
+     */
+    val unselectedGlowColor: Color
+        @Composable get() = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+
+    /**
+     * Default color for selected indicators.
+     */
+    val selectedShapeColor: Color @Composable get() = MaterialTheme.colorScheme.primary
+
+    /**
+     * Default color for unselected indicators.
+     */
+    val unselectedShapeColor: Color @Composable get() = MaterialTheme.colorScheme.surfaceVariant
+
+    /**
+     * Default border color for selected indicators.
+     */
+    val selectedBorderColor: Color @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
+
+    /**
+     * Default border color for unselected indicators.
+     */
+    val unselectedBorderColor: Color @Composable get() = MaterialTheme.colorScheme.outlineVariant
+
+    @Deprecated(
+        message = "Use selectedShapes instead!",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.selectedShapes",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultSelectedShapes = selectedShapes
+
+    @Deprecated(
+        message = "Use unselectedShapes instead!",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.unselectedShapes",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultUnselectedShapes = unselectedShapes
+
+    @Deprecated(
+        message = "Use selectedShapeSize instead!",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.selectedShapeSize",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultSelectedShapeSize = selectedShapeSize
+
+    @Deprecated(
+        message = "Use unselectedShapeSize instead! The default size is changed from 10.dp to 8.dp",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.unselectedShapeSize",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultUnselectedShapeSize = unselectedShapeSize
+
+    @Deprecated(
+        message = "Use borderWidth instead!",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.borderWidth",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultBorderWidth = borderWidth
+
+    @Deprecated(
+        message = "Use glowRadius instead!",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.glowRadius",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultGlowRadius = glowRadius
+
+    @Deprecated(
+        message = "Use glowBlur instead!",
+        replaceWith = ReplaceWith(
+            "ShapeIndicatorDefaults.glowBlur",
+            imports = ["in.hridayan.shapeindicators.ShapeIndicatorDefaults"]
+        )
+    )
+    val defaultGlowBlur = glowBlur
+
+    /**
+     * The maximum number of items visible when overflow is enabled.
+     */
     const val MAX_VISIBLE_ITEMS = 5
+
+    /**
+     * Default size of the hint indicators shown at the edges during overflow.
+     */
     val overflowHintShapeSize = 6.dp
 }
 

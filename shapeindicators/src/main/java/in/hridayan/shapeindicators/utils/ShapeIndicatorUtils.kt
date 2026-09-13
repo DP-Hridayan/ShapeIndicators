@@ -29,7 +29,7 @@ internal inline fun <T> interpolateForIndex(
         currentPage -> lerp(selected, unselected, abs(offset))
         currentPage + 1 -> lerp(unselected, selected, offset.coerceIn(0f, 1f))
         currentPage - 1 -> lerp(unselected, selected, (-offset).coerceIn(0f, 1f))
-        else -> return unselected
+        else -> unselected
     }
 }
 

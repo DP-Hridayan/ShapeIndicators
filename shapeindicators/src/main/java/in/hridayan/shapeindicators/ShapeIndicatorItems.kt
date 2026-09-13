@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
-import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
 import `in`.hridayan.shapeindicators.utils.interpolateForIndex
 import `in`.hridayan.shapeindicators.utils.lerpColor
@@ -53,6 +52,8 @@ internal fun ShapeIndicatorItems(
 
     val selectedShapes = if (shuffleShapes) shuffledSelectedShapes else shapes.selectedShapes
     val unselectedShapes = if (shuffleShapes) shuffledUnselectedShapes else shapes.unselectedShapes
+    val finalShapes =
+        shapes.copy(selectedShapes = selectedShapes, unselectedShapes = unselectedShapes)
 
     val maxItemSize = maxOf(sizes.selectedSize, sizes.unselectedSize)
 
@@ -105,8 +106,7 @@ internal fun ShapeIndicatorItems(
                 borders = borders,
                 glow = glow,
                 overflow = overflow,
-                selectedShapes = selectedShapes,
-                unselectedShapes = unselectedShapes,
+                shapes = finalShapes,
                 maxItemSize = maxItemSize,
             )
         }
@@ -123,8 +123,7 @@ private fun ShapeIndicatorItem(
     borders: ShapeIndicatorBorders,
     glow: ShapeIndicatorGlow,
     overflow: ShapeIndicatorOverflow,
-    selectedShapes: List<RoundedPolygon>,
-    unselectedShapes: List<RoundedPolygon>,
+    shapes: IndicatorShapes,
     maxItemSize: Dp,
 ) {
     val hintProgress by animateFloatAsState(
@@ -139,8 +138,10 @@ private fun ShapeIndicatorItem(
                 val sizePx = size.minDimension
                 val center = Offset(sizePx / 2f, sizePx / 2f)
 
-                val startShape = unselectedShapes[index % unselectedShapes.size].scaled(sizePx)
-                val endShape = selectedShapes[index % selectedShapes.size].scaled(sizePx)
+                val startShape =
+                    shapes.unselectedShapes[index % shapes.unselectedShapes.size].scaled(sizePx)
+                val endShape =
+                    shapes.selectedShapes[index % shapes.selectedShapes.size].scaled(sizePx)
 
                 val morph = Morph(start = startShape, end = endShape)
 
